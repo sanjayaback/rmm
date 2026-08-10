@@ -1,29 +1,34 @@
 @echo off
 echo ===================================================
-echo Pushing Rentivo Project to GitHub: sanjayaback/rmm
+echo Cleaning Duplicates & Pushing to GitHub: sanjayaback/rmm
 echo ===================================================
 
 cd /d "%~dp0"
 
-echo [1/5] Initializing Git repository if needed...
+echo [1/6] Cleaning leftover duplicate shell folders...
+if exist "app\{Models,Services,Policies,Http" rmdir /s /q "app\{Models,Services,Policies,Http" 2>nul
+if exist "resources\views\{layouts,partials,auth,listings,unlocks,dashboard,admin" rmdir /s /q "resources\views\{layouts,partials,auth,listings,unlocks,dashboard,admin" 2>nul
+if exist "database\{migrations,seeders,factories}" rmdir /s /q "database\{migrations,seeders,factories}" 2>nul
+
+echo [2/6] Initializing Git repository if needed...
 git init
 
-echo [2/5] Setting remote origin to https://github.com/sanjayaback/rmm.git...
+echo [3/6] Setting remote origin to https://github.com/sanjayaback/rmm.git...
 git remote remove origin 2>nul
 git remote add origin https://github.com/sanjayaback/rmm.git
 
-echo [3/5] Staging files...
+echo [4/6] Staging clean files...
 git add .
 
-echo [4/5] Creating commit...
-git commit -m "feat: complete Rentivo platform with Admin CRM, Global Search, Security Hardening, Tests & Docker setup"
+echo [5/6] Creating commit...
+git commit -m "fix: clean leftover shell brace folders and sync all features"
 
-echo [5/5] Pushing to main branch...
+echo [6/6] Pushing clean repository to main branch...
 git branch -M main
 git push -u origin main --force
 
 echo ===================================================
-echo Done! Project successfully pushed to:
+echo Done! Clean codebase successfully pushed to:
 echo https://github.com/sanjayaback/rmm.git
 echo ===================================================
 pause
