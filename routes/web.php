@@ -4,14 +4,17 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UnlockController;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────────────────────────
 Route::get('/', [ListingController::class, 'map'])->name('home');
 Route::get('/browse', [ListingController::class, 'browse'])->name('listings.browse');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
-Route::get('/api/listings/map', [ListingController::class, 'apiMap'])->name('api.listings.map');
+Route::get('/api/listings/map', [ListingController::class, 'apiMap'])->middleware('throttle:60,1')->name('api.listings.map');
+Route::get('/api/search', [SearchController::class, 'apiSearch'])->middleware('throttle:60,1')->name('api.search');
 
 // ── Auth (Breeze) ─────────────────────────────────────────────────────────────
 require __DIR__.'/auth.php';
@@ -59,6 +62,8 @@ Route::middleware(['auth', 'active', 'role:admin'])
     Route::prefix('listings')->name('listings.')->group(function () {
         Route::get('/', [AdminController::class, 'listings'])->name('index');
         Route::get('/{listing}', [AdminController::class, 'showListing'])->name('show');
+        Route::get('/{listing}/edit', [AdminController::class, 'editListing'])->name('edit');
+        Route::put('/{listing}', [AdminController::class, 'updateListing'])->name('update');
         Route::post('/{listing}/approve', [AdminController::class, 'approveListing'])->name('approve');
         Route::post('/{listing}/reject', [AdminController::class, 'rejectListing'])->name('reject');
         Route::delete('/{listing}', [AdminController::class, 'deleteListing'])->name('delete');
@@ -72,4 +77,7 @@ Route::middleware(['auth', 'active', 'role:admin'])
     });
 
     Route::get('/payments', [AdminController::class, 'payments'])->name('payments.index');
+    Route::get('/audit-logs', [AdminController::class, 'auditLogs'])->name('audit-logs.index');
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings.index');
+    Route::post('/settings', [AdminController::class, 'updateSettings'])->name('settings.update');
 });

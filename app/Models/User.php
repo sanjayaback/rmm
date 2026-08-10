@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -37,7 +38,7 @@ class User extends Authenticatable
     public function generateOtp(): string {
         $code = (string) random_int(100000, 999999);
         $this->update([
-            'otp_code' => $code,
+            'otp_code' => Hash::make($code),
             'otp_expires_at' => now()->addMinutes(10),
         ]);
         return $code;
@@ -46,7 +47,7 @@ class User extends Authenticatable
     public function verifyOtp(string $code): bool {
         if (!$this->otp_code || !$this->otp_expires_at) return false;
         if (now()->greaterThan($this->otp_expires_at)) return false;
-        return $this->otp_code === trim($code);
+        return Hash::check(trim($code), $this->otp_code);
     }
 
     public function clearOtp(): void {

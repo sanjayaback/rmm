@@ -125,6 +125,54 @@ class ListingService
         return $q->latest()->paginate($perPage)->withQueryString();
     }
 
+    public function searchGlobal(string $query, int $limit = 8): array
+    {
+        $term = trim($query);
+        if (empty($term)) {
+            return ['listings' => [], 'cities' => [], 'areas' => []];
+        }
+
+        $listings = Listing::public()
+            ->where(function($sub) use ($term) {
+                $sub->where('title', 'like', "%{$term}%")
+                    ->orWhere('description', 'like', "%{$term}%")
+                    ->orWhere('area', 'like', "%{$term}%")
+                    ->orWhere('city', 'like', "%{$term}%")
+                    ->orWhere('room_type', 'like', "%{$term}%");
+            })
+            ->latest()
+            ->take($limit)
+            ->get()
+            ->map(fn(Listing $l) => [
+                'id' => $l->id,
+                'title' => $l->title,
+                'city' => $l->city,
+                'area' => $l->area,
+                'price' => $l->price,
+                'room_type' => $l->room_type_label,
+                'image_url' => $l->image_url,
+                'url' => route('listings.show', $l),
+            ]);
+
+        $cities = Listing::public()
+            ->where('city', 'like', "%{$term}%")
+            ->distinct()
+            ->pluck('city')
+            ->take(5);
+
+        $areas = Listing::public()
+            ->where('area', 'like', "%{$term}%")
+            ->distinct()
+            ->pluck('area')
+            ->take(5);
+
+        return [
+            'listings' => $listings,
+            'cities'   => $cities,
+            'areas'    => $areas,
+        ];
+    }
+
     private function offset(float $coord): float
     {
         $delta = (mt_rand(-100, 100) / 100) * self::APPROX_OFFSET;

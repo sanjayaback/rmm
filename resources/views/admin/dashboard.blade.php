@@ -24,7 +24,7 @@
         @endforeach
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-8">
         <a href="{{ route('admin.listings.index', ['status'=>'pending']) }}"
            class="bg-[#111113] border border-yellow-500/20 hover:border-yellow-500/50 rounded-2xl p-5 transition-colors">
             <div class="flex items-center justify-between">
@@ -39,11 +39,18 @@
                 <span class="text-3xl">👤</span>
             </div>
         </a>
-        <a href="{{ route('admin.payments.index') }}"
-           class="bg-[#111113] border border-white/[0.08] hover:border-orange-500/30 rounded-2xl p-5 transition-colors">
+        <a href="{{ route('admin.settings.index') }}"
+           class="bg-[#111113] border border-teal-500/20 hover:border-teal-500/50 rounded-2xl p-5 transition-colors">
             <div class="flex items-center justify-between">
-                <div><div class="font-display text-xl font-bold text-green-400">{{ $stats['unlocks_today'] }}</div><div class="text-white/50 text-sm">Unlocks Today</div></div>
-                <span class="text-3xl">🔓</span>
+                <div><div class="font-display text-xl font-bold text-teal-400">Settings</div><div class="text-white/50 text-sm">Site Settings CRM</div></div>
+                <span class="text-3xl">⚙️</span>
+            </div>
+        </a>
+        <a href="{{ route('admin.audit-logs.index') }}"
+           class="bg-[#111113] border border-purple-500/20 hover:border-purple-500/50 rounded-2xl p-5 transition-colors">
+            <div class="flex items-center justify-between">
+                <div><div class="font-display text-xl font-bold text-purple-400">Logs</div><div class="text-white/50 text-sm">Audit Trail</div></div>
+                <span class="text-3xl">📜</span>
             </div>
         </a>
     </div>

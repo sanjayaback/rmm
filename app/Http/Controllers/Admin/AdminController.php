@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Listing;
+use App\Models\Setting;
 use App\Models\Unlock;
 use App\Models\User;
 use App\Services\ListingService;
@@ -56,9 +58,49 @@ class AdminController extends Controller
         return view('admin.listings.show', compact('listing'));
     }
 
+    public function editListing(Listing $listing): View
+    {
+        return view('admin.listings.edit', compact('listing'));
+    }
+
+    public function updateListing(Request $request, Listing $listing): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title'         => 'required|string|max:255',
+            'description'   => 'required|string',
+            'price'         => 'required|numeric|min:0',
+            'unlock_fee'    => 'required|numeric|min:0',
+            'city'          => 'required|string|max:100',
+            'area'          => 'required|string|max:100',
+            'exact_address' => 'required|string|max:255',
+            'phone'         => 'required|string|max:30',
+            'room_type'     => 'required|in:single,double,apartment,hostel',
+            'status'        => 'required|in:pending,approved,rejected',
+        ]);
+
+        $oldStatus = $listing->status;
+        $this->listingService->update($listing, $validated, $request->file('image'));
+
+        AuditLog::log('admin_update_listing', [
+            'listing_id' => $listing->id,
+            'title'      => $listing->title,
+            'old_status' => $oldStatus,
+            'new_status' => $listing->status,
+        ], $listing);
+
+        return redirect()->route('admin.listings.show', $listing)
+            ->with('success', 'Listing updated successfully by Admin.');
+    }
+
     public function approveListing(Listing $listing): RedirectResponse
     {
         $this->listingService->approve($listing);
+
+        AuditLog::log('admin_approve_listing', [
+            'listing_id' => $listing->id,
+            'title'      => $listing->title,
+        ], $listing);
+
         return back()->with('success', "Listing \"{$listing->title}\" approved.");
     }
 
@@ -66,12 +108,27 @@ class AdminController extends Controller
     {
         $request->validate(['reason' => 'required|string|min:10|max:500']);
         $this->listingService->reject($listing, $request->reason);
+
+        AuditLog::log('admin_reject_listing', [
+            'listing_id' => $listing->id,
+            'title'      => $listing->title,
+            'reason'     => $request->reason,
+        ], $listing);
+
         return back()->with('success', "Listing \"{$listing->title}\" rejected.");
     }
 
     public function deleteListing(Listing $listing): RedirectResponse
     {
+        $title = $listing->title;
+        $id    = $listing->id;
         $this->listingService->delete($listing);
+
+        AuditLog::log('admin_delete_listing', [
+            'listing_id' => $id,
+            'title'      => $title,
+        ]);
+
         return redirect()->route('admin.listings.index')->with('success', 'Listing deleted.');
     }
 
@@ -104,7 +161,15 @@ class AdminController extends Controller
             return back()->with('error', 'You cannot change your own role.');
         }
 
+        $oldRole = $user->role;
         $user->update(['role' => $request->role]);
+
+        AuditLog::log('admin_update_user_role', [
+            'target_user_id' => $user->id,
+            'old_role'       => $oldRole,
+            'new_role'       => $request->role,
+        ], $user);
+
         return back()->with('success', "User role updated to {$request->role}.");
     }
 
@@ -116,10 +181,16 @@ class AdminController extends Controller
 
         $user->update(['is_active' => !$user->is_active]);
         $status = $user->is_active ? 'activated' : 'deactivated';
+
+        AuditLog::log('admin_toggle_user_status', [
+            'target_user_id' => $user->id,
+            'is_active'      => $user->is_active,
+        ], $user);
+
         return back()->with('success', "User account {$status}.");
     }
 
-    // ── Payments ──────────────────────────────────────────────────
+    // ── Payments & Audits ──────────────────────────────────────────
 
     public function payments(Request $request): View
     {
@@ -131,5 +202,55 @@ class AdminController extends Controller
         $totalRevenue = Unlock::where('payment_status', 'completed')->sum('amount_paid');
 
         return view('admin.payments.index', compact('unlocks', 'totalRevenue'));
+    }
+
+    public function auditLogs(Request $request): View
+    {
+        $logs = AuditLog::with('user')
+            ->when($request->action, fn($q) => $q->where('action', 'like', '%'.$request->action.'%'))
+            ->latest()
+            ->paginate(25);
+
+        return view('admin.audit_logs', compact('logs'));
+    }
+
+    // ── Site Settings CRM ──────────────────────────────────────────
+
+    public function settings(): View
+    {
+        $settings = [
+            'site_name'          => Setting::get('site_name', config('app.name', 'Rentivo')),
+            'support_email'      => Setting::get('support_email', 'support@rentivo.rent'),
+            'support_phone'      => Setting::get('support_phone', '+977 9800000000'),
+            'default_unlock_fee' => Setting::get('default_unlock_fee', config('roomrent.default_unlock_fee', 50)),
+            'referral_reward'    => Setting::get('referral_reward', config('roomrent.referral_reward', 25)),
+            'khalti_fake_mode'   => Setting::get('khalti_fake_mode', config('roomrent.khalti_fake_mode', false)),
+        ];
+
+        return view('admin.settings', compact('settings'));
+    }
+
+    public function updateSettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'site_name'          => 'required|string|max:100',
+            'support_email'      => 'required|email|max:150',
+            'support_phone'      => 'required|string|max:50',
+            'default_unlock_fee' => 'required|numeric|min:0',
+            'referral_reward'    => 'required|numeric|min:0',
+            'khalti_fake_mode'   => 'nullable|boolean',
+        ]);
+
+        foreach ($validated as $key => $val) {
+            if ($key === 'khalti_fake_mode') {
+                Setting::set($key, $request->has('khalti_fake_mode') ? '1' : '0', 'payment');
+            } else {
+                Setting::set($key, (string)$val, 'general');
+            }
+        }
+
+        AuditLog::log('admin_update_settings', $validated);
+
+        return back()->with('success', 'Site settings updated successfully.');
     }
 }

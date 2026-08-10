@@ -25,7 +25,7 @@ class OtpVerificationController extends Controller
         }
 
         // Show code helper box in local environment when mail server is not active
-        $devOtp = (app()->environment('local') || config('mail.default') === 'log') ? $user->otp_code : null;
+        $devOtp = (app()->environment('local') || config('mail.default') === 'log') ? session('otp_raw_code') : null;
 
         return view('auth.verify-otp', [
             'email'   => $user->email,
@@ -78,6 +78,7 @@ class OtpVerificationController extends Controller
         $user = User::where('email', $email)->first();
         if ($user) {
             $otp = $user->generateOtp();
+            session(['otp_raw_code' => $otp]);
             try {
                 $user->notify(new SendOtpNotification($otp));
             } catch (\Throwable $e) {
