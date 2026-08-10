@@ -16,7 +16,7 @@
             <!-- Responsive Active Search Bar (Fixed Wide Search on Mobile & Desktop) -->
             <form method="GET" action="{{ route('search') }}" class="flex-1 max-w-md flex items-center bg-gray-50 border border-gray-200 hover:border-[#00796B]/50 focus-within:border-[#00796B] rounded-full py-1 px-2.5 sm:px-3 shadow-sm text-xs font-bold transition-all ml-1 sm:ml-0">
                 <svg class="w-4 h-4 text-[#00796B] shrink-0 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                <input type="text" name="q" value="{{ request('q', request('search')) }}"
+                <input type="text" id="nav-global-search" name="q" value="{{ request('q', request('search')) }}"
                        placeholder="Search rooms, cities, areas or landmarks..."
                        class="w-full bg-transparent border-none py-1.5 px-2 text-[11px] sm:text-xs text-gray-900 focus:outline-none focus:ring-0 placeholder-gray-400 font-medium">
                 <button type="submit" class="w-6 h-6 sm:w-7 sm:h-7 bg-[#00796B] hover:bg-[#00695C] rounded-full flex items-center justify-center text-white shadow-sm shrink-0 transition-colors cursor-pointer">

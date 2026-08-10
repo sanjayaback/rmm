@@ -14,7 +14,7 @@ git init
 git remote remove origin 2>$null
 git remote add origin https://github.com/sanjayaback/rmm.git
 git add .
-git commit -m "fix: clean leftover shell brace folders and sync all features"
+git commit -m "feat: unify global search input with real-time interactive map filtering"
 git branch -M main
 git push -u origin main --force
 

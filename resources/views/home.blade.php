@@ -118,13 +118,6 @@
                 <span id="count-num">0</span> rooms
             </div>
 
-            <!-- Live Keyword Input -->
-            <div class="relative shrink-0">
-                <input type="text" id="map-text-search" placeholder="Search area or landmark..."
-                       class="bg-gray-50 border border-gray-200 text-gray-800 text-[11px] font-bold rounded-full px-3 py-1.5 pl-7 focus:outline-none focus:border-[#00796B] w-36 sm:w-48 shadow-sm">
-                <svg class="w-3.5 h-3.5 text-[#00796B] absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-
             <select id="city-filter" class="filter-pill-airbnb">
                 <option value="">All Worldwide Cities</option>
                 @foreach($cities as $city)
@@ -256,7 +249,7 @@ function focusCard(i) {
 
 function applyFilters() {
     const city = document.getElementById('city-filter').value;
-    const textSearch = document.getElementById('map-text-search').value.toLowerCase().trim();
+    const textSearch = (document.getElementById('nav-global-search')?.value || '').toLowerCase().trim();
 
     let filtered = ALL;
 
@@ -279,7 +272,10 @@ function applyFilters() {
 }
 
 document.getElementById('city-filter').addEventListener('change', applyFilters);
-document.getElementById('map-text-search').addEventListener('input', applyFilters);
+document.getElementById('nav-global-search')?.addEventListener('input', applyFilters);
+if (document.getElementById('nav-global-search')?.value) {
+    applyFilters();
+}
 
 document.querySelectorAll('[data-type]').forEach(btn => {
     btn.addEventListener('click', () => {
