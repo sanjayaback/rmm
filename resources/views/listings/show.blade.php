@@ -41,7 +41,7 @@
     <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden h-60 sm:h-80 md:h-[420px] bg-gray-100 mb-6 sm:mb-8 shadow-md border border-gray-200 group">
         <img src="{{ $listing->image_url }}" alt="{{ $listing->title }}"
              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-             onerror="this.src='/images/room-placeholder.jpg'">
+             onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
         <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-2">
             <div class="bg-white/95 backdrop-blur-xl px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-gray-200 shadow-md">
                 <span class="text-[#00796B] font-black text-lg sm:text-2xl font-heading">Rs. {{ number_format($listing->price) }}</span>

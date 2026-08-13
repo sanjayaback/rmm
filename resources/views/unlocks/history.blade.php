@@ -13,7 +13,7 @@
         @foreach($unlocks as $unlock)
         <div class="bg-[#111113] border border-white/[0.08] rounded-2xl p-5 flex flex-col sm:flex-row gap-4">
             <div class="w-full sm:w-28 h-24 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
-                <img src="{{ $unlock->listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                <img src="{{ $unlock->listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
             </div>
             <div class="flex-1 min-w-0">
                 <h3 class="font-semibold text-white text-sm mb-0.5">{{ $unlock->listing->title }}</h3>

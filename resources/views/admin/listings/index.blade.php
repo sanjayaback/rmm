@@ -47,7 +47,7 @@
                         <td class="px-5 py-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                                    <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                                    <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
                                 </div>
                                 <div class="min-w-0">
                                     <div class="text-white font-medium text-sm truncate max-w-[200px]">{{ $listing->title }}</div>

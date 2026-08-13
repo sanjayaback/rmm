@@ -21,14 +21,13 @@ echo [4/6] Staging clean files...
 git add .
 
 echo [5/6] Creating commit...
-git commit -m "fix: clean leftover shell brace folders and sync all features"
+git commit -m "feat: sync custom rentivo.css and update layouts for cPanel build"
 
 echo [6/6] Pushing clean repository to main branch...
 git branch -M main
-git push -u origin main --force
+git push -u origin main
 
 echo ===================================================
-echo Done! Clean codebase successfully pushed to:
+echo Done! Clean codebase & CI/CD workflow pushed to:
 echo https://github.com/sanjayaback/rmm.git
 echo ===================================================
-pause

@@ -24,8 +24,8 @@ class OtpVerificationController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'User account not found.']);
         }
 
-        // Show code helper box in local environment when mail server is not active
-        $devOtp = (app()->environment('local') || config('mail.default') === 'log') ? session('otp_raw_code') : null;
+        // Show code helper box in local environment or if mail delivery encountered a server issue
+        $devOtp = (app()->environment('local') || config('mail.default') === 'log' || session('mail_delivery_failed')) ? session('otp_raw_code') : null;
 
         return view('auth.verify-otp', [
             'email'   => $user->email,
@@ -83,11 +83,12 @@ class OtpVerificationController extends Controller
                 $user->notify(new SendOtpNotification($otp));
             } catch (\Throwable $e) {
                 logger()->error('Resend OTP Email delivery failed: ' . $e->getMessage());
+                session(['mail_delivery_failed' => true]);
             }
 
             $msg = 'A new 6-digit verification code has been generated and sent to your email address.';
-            if (app()->environment('local') || config('mail.default') === 'log') {
-                $msg .= " (Local Testing Code: {$otp})";
+            if (app()->environment('local') || config('mail.default') === 'log' || session('mail_delivery_failed')) {
+                $msg .= " (Verification Code: {$otp})";
             }
 
             return back()->with('status', $msg);

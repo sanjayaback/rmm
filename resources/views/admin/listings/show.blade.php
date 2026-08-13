@@ -16,7 +16,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-5">
             <div class="rounded-2xl overflow-hidden h-60 bg-white/5">
-                <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
             </div>
 
             <div class="bg-[#111113] border border-white/[0.08] rounded-2xl p-5 space-y-4">

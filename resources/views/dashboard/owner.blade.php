@@ -54,7 +54,7 @@
                 @foreach($listings as $listing)
                     <div class="flex items-center gap-4 p-5 hover:bg-white/[0.02] transition-colors">
                         <div class="w-14 h-14 rounded-2xl overflow-hidden bg-[#1C1C22] shrink-0 border border-white/10">
-                            <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                            <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-white text-sm truncate mb-0.5">{{ $listing->title }}</h4>

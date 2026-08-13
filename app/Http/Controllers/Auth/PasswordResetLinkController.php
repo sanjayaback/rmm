@@ -26,8 +26,19 @@ class PasswordResetLinkController extends Controller
         $user = User::where('email', $request->email)->first();
         $otp  = $user->generateOtp();
 
-        session(['otp_user_email' => $user->email]);
+        session([
+            'otp_user_email' => $user->email,
+            'otp_purpose'    => 'password_reset',
+            'otp_raw_code'   => $otp,
+        ]);
 
-        return redirect()->route('otp.verify')->with('status', "6-digit OTP verification code generated! (Demo Code: {$otp})");
+        try {
+            $user->notify(new \App\Notifications\SendOtpNotification($otp));
+        } catch (\Throwable $e) {
+            logger()->error('Password Reset OTP Email delivery failed: ' . $e->getMessage());
+            session(['mail_delivery_failed' => true]);
+        }
+
+        return redirect()->route('otp.verify')->with('status', "A 6-digit OTP verification code has been sent to your email address.");
     }
 }

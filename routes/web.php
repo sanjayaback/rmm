@@ -12,9 +12,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [ListingController::class, 'map'])->name('home');
 Route::get('/browse', [ListingController::class, 'browse'])->name('listings.browse');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
-Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
+Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show')->whereNumber('listing');
 Route::get('/api/listings/map', [ListingController::class, 'apiMap'])->middleware('throttle:60,1')->name('api.listings.map');
 Route::get('/api/search', [SearchController::class, 'apiSearch'])->middleware('throttle:60,1')->name('api.search');
+
+// Storage asset fallback for hosting environments missing symlinks
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*');
 
 // ── Auth (Breeze) ─────────────────────────────────────────────────────────────
 require __DIR__.'/auth.php';
@@ -34,9 +43,9 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/my-listings', [ListingController::class, 'index'])->name('listings.index');
         Route::get('/listings/create', [ListingController::class, 'create'])->name('listings.create');
         Route::post('/listings', [ListingController::class, 'store'])->name('listings.store');
-        Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])->name('listings.edit');
-        Route::put('/listings/{listing}', [ListingController::class, 'update'])->name('listings.update');
-        Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->name('listings.destroy');
+        Route::get('/listings/{listing}/edit', [ListingController::class, 'edit'])->name('listings.edit')->whereNumber('listing');
+        Route::put('/listings/{listing}', [ListingController::class, 'update'])->name('listings.update')->whereNumber('listing');
+        Route::delete('/listings/{listing}', [ListingController::class, 'destroy'])->name('listings.destroy')->whereNumber('listing');
     });
 
     // Unlock / Payment

@@ -221,7 +221,7 @@ function cardHtml(l) {
     const formattedPrice = Number(l.price).toLocaleString();
     return `<div style="display:flex;align-items:center;gap:12px;padding:10px">
         <div style="width:84px;height:84px;border-radius:14px;overflow:hidden;position:relative;flex-shrink:0;background:#F3F4F6;border:1px solid #E5E7EB">
-            <img src="${img}" style="width:100%;height:100%;object-fit:cover" onerror="this.src='/images/room-placeholder.jpg'">
+            <img src="${img}" style="width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.src='/images/room-placeholder.jpg'">
             <div style="position:absolute;top:4px;left:4px;background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);color:#00796B;font-size:9px;font-weight:800;padding:1px 6px;border-radius:999px;border:1px solid #B2DFDB;text-transform:capitalize;font-family:'Outfit',sans-serif">${l.room_type}</div>
         </div>
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-between;height:84px">

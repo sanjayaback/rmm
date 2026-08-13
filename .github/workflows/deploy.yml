@@ -31,7 +31,7 @@ jobs:
 
       - name: 🎨 Install NPM & Build Vite Assets
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: 📂 Deploy via FTP to cPanel

@@ -64,7 +64,7 @@
             @foreach($recentListings as $listing)
             <div class="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.02] transition-colors border-b border-white/[0.04]">
                 <div class="w-10 h-10 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                    <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                    <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="text-white text-sm font-medium truncate">{{ $listing->title }}</div>

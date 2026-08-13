@@ -16,7 +16,7 @@
     <!-- Room Summary Card -->
     <div class="card-airbnb p-5 mb-6 flex gap-4 items-center">
         <div class="w-20 h-20 rounded-2xl overflow-hidden bg-[#1C1C22] shrink-0 border border-white/10">
-            <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+            <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
         </div>
         <div class="flex-1 min-w-0">
             <span class="badge-rose mb-1">{{ $listing->room_type_label }}</span>

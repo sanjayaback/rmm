@@ -4,7 +4,7 @@
         <div class="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
             <img src="{{ $listing->image_url }}" alt="{{ $listing->title }}"
                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                 onerror="this.src='/images/room-placeholder.jpg'">
+                 onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
             
             <!-- Room Type Badge -->
             <div class="absolute top-3 left-3">

@@ -58,7 +58,7 @@
                             <div class="flex items-center gap-4">
                                 <img src="{{ $listing->image_url }}" alt="{{ $listing->title }}"
                                      class="w-16 h-16 rounded-xl object-cover border border-gray-200 shrink-0"
-                                     onerror="this.src='/images/room-placeholder.jpg'">
+                                     onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
                                 <div>
                                     <h4 class="font-bold text-gray-900 text-sm font-heading">{{ $listing->title }}</h4>
                                     <div class="text-xs text-gray-500">📍 {{ $listing->area }}, {{ $listing->city }}</div>

@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css','resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/rentivo.css') }}">
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[#F8F9FA] text-[#1F2937] relative overflow-x-hidden selection:bg-[#00796B]/20 selection:text-[#00796B]">
 

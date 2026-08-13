@@ -20,7 +20,7 @@
         @foreach($listings as $listing)
         <div class="bg-[#111113] border border-white/[0.08] rounded-2xl p-5 flex flex-col sm:flex-row gap-4">
             <div class="w-full sm:w-32 h-24 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
-                <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.src='/images/room-placeholder.jpg'">
+                <img src="{{ $listing->image_url }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/images/room-placeholder.jpg'">
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-1">

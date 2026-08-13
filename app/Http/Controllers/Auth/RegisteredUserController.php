@@ -58,19 +58,21 @@ class RegisteredUserController extends Controller
 
         // Generate 6-digit OTP code and send email notification
         $otp = $user->generateOtp();
-        
-        try {
-            $user->notify(new SendOtpNotification($otp));
-        } catch (\Throwable $e) {
-            // Log mail failure cleanly in production without breaking user flow
-            logger()->error('OTP Email delivery failed: ' . $e->getMessage());
-        }
 
         session([
             'otp_user_email' => $user->email,
             'otp_purpose'    => 'signup',
+            'otp_raw_code'   => $otp,
         ]);
+        
+        try {
+            $user->notify(new SendOtpNotification($otp));
+        } catch (\Throwable $e) {
+            // Log mail failure cleanly and flag session fallback
+            logger()->error('OTP Email delivery failed: ' . $e->getMessage());
+            session(['mail_delivery_failed' => true]);
+        }
 
-        return redirect()->route('otp.verify')->with('status', 'Account created! A 6-digit security verification code has been sent to your email address.');
+        return redirect()->route('otp.verify')->with('status', 'Account created! A 6-digit security verification code has been generated and sent to your email address.');
     }
 }
